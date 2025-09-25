@@ -37,7 +37,7 @@ ENV PYTHONUNBUFFERED=1
 COPY rootfs /
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8000/health || curl -f http://localhost:8000/ || exit 1
+    CMD curl -f http://localhost:8000/api/health || curl -f http://localhost:8000/api/ || exit 1
 
 LABEL \
     io.hass.name="Shelly Manager" \
