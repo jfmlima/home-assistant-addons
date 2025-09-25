@@ -17,17 +17,22 @@ RUN \
 
 RUN adduser -D -u 10001 app
 
-COPY --from=api-source --chown=app:app /app/.venv /app/.venv
 COPY --from=api-source --chown=app:app /app/packages/core /app/packages/core
 COPY --from=api-source --chown=app:app /app/packages/api /app/packages/api
 
 COPY --from=web-source /usr/share/nginx/html /var/www/html/
 
+WORKDIR /app
+
+RUN python3 -m venv .venv \
+    && . .venv/bin/activate \
+    && pip install --no-cache-dir /app/packages/core /app/packages/api
+
+
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONDONTWRITEBYTECODE=1 
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /app
 
 COPY rootfs /
 
