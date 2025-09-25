@@ -3,7 +3,7 @@ name: Build and publish Home Assistant add-on
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - "shelly-manager/**"
   workflow_dispatch:
