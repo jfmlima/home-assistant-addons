@@ -1,0 +1,31 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Home Assistant Add-on: Shelly Manager API
+# ==============================================================================
+
+# Get addon configuration from Home Assistant
+DEVICE_IPS=$(bashio::config 'device_ips | @json')
+PREDEFINED_RANGES=$(bashio::config 'predefined_ranges | @json')
+TIMEOUT=$(bashio::config 'timeout')
+MAX_WORKERS=$(bashio::config 'max_workers')
+LOG_LEVEL=$(bashio::config 'log_level')
+
+# Create config.json
+cat > /app/config.json << EOF
+{
+  "device_ips": ${DEVICE_IPS},
+  "predefined_ranges": ${PREDEFINED_RANGES},
+  "timeout": ${TIMEOUT},
+  "max_workers": ${MAX_WORKERS}
+}
+EOF
+
+bashio::log.info "Configuration created:"
+cat /app/config.json
+
+bashio::log.info "Starting Shelly Manager API..."
+
+# Set environment and start API
+export SHELLY_CONFIG_FILE=/app/config.json
+cd /app
+exec s6-setuidgid app uvicorn api.main:app --host 0.0.0.0 --port 8000 --log-level ${LOG_LEVEL}

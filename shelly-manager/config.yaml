@@ -1,0 +1,45 @@
+# https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
+name: Shelly Manager
+version: "1.0.0"
+slug: shelly-manager
+description: Local management for Shelly IoT devices without cloud connectivity
+url: "https://github.com/jfmlima/shelly-manager"
+arch:
+  - aarch64
+  - amd64
+startup: application
+boot: auto
+init: false
+host_network: true
+webui: "http://[HOST]:[PORT:8080]"
+ingress: true
+ingress_port: 8080
+panel_icon: mdi:lightbulb-on
+panel_title: Shelly Manager
+ports:
+  "8000/tcp": 8000
+  "8080/tcp": 8080
+ports_description:
+  "8000/tcp": "API Server Port"
+  "8080/tcp": "Web Interface Port"
+map:
+  - share:rw
+  - ssl
+options:
+  device_ips: []
+  predefined_ranges:
+    - start: "192.168.1.1"
+      end: "192.168.1.254"
+  timeout: 3.0
+  max_workers: 50
+  log_level: "info"
+schema:
+  device_ips:
+    - str
+  predefined_ranges:
+    - start: str
+      end: str
+  timeout: float?
+  max_workers: int?
+  log_level: list(debug|info|warning|error)?
+image: "ghcr.io/jfmlima/shelly-manager-addon"
