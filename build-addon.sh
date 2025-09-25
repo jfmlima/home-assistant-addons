@@ -38,15 +38,15 @@ docker buildx build \
     --platform "linux/amd64,linux/arm64" \
     --build-arg "BUILD_VERSION=${VERSION}" \
     -f "shelly-manager/Dockerfile" \
-    -t "${DOCKER_REPO}/${ADDON_NAME}-addon:${VERSION}" \
-    -t "${DOCKER_REPO}/${ADDON_NAME}-addon:latest" \
+    -t "${DOCKER_REPO}/home-assistant-addons/${ADDON_NAME}:${VERSION}" \
+    -t "${DOCKER_REPO}/home-assistant-addons/${ADDON_NAME}:latest" \
     ./shelly-manager
 
 echo -e "${GREEN}✓ Built multi-arch addon successfully${NC}"
 
 echo ""
 echo -e "${GREEN}✓ Multi-arch build completed successfully!${NC}"
-echo -e "${YELLOW}Image: ${DOCKER_REPO}/${ADDON_NAME}-addon${NC}"
+echo -e "${YELLOW}Image: ${DOCKER_REPO}/home-assistant-addons/${ADDON_NAME}${NC}"
 echo -e "${YELLOW}Tags: ${VERSION}, latest${NC}"
 echo -e "${YELLOW}Platforms: ${PLATFORMS}${NC}"
 echo ""
