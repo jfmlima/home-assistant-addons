@@ -27,6 +27,8 @@ ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONDONTWRITEBYTECODE=1 
 ENV PYTHONUNBUFFERED=1
 
+WORKDIR /app
+
 COPY rootfs /
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \

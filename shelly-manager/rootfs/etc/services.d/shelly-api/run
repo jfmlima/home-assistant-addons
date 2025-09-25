@@ -25,7 +25,10 @@ cat /app/config.json
 
 bashio::log.info "Starting Shelly Manager API..."
 
-# Set environment and start API
 export SHELLY_CONFIG_FILE=/app/config.json
+export PATH="/app/.venv/bin:$PATH"
+export PYTHONDONTWRITEBYTECODE=1
+export PYTHONUNBUFFERED=1
+
 cd /app
 exec s6-setuidgid app /app/.venv/bin/uvicorn api.main:app --host 0.0.0.0 --port 8000 --log-level ${LOG_LEVEL}
