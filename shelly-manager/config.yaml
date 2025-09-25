@@ -42,4 +42,4 @@ schema:
   timeout: float?
   max_workers: int?
   log_level: list(debug|info|warning|error)?
-image: "ghcr.io/jfmlima/home-assistant-addons/shelly-manager"
+image: "ghcr.io/jfmlima/home-assistant-addons:shelly-manager"
