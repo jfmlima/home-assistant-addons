@@ -34,7 +34,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/home-assistant-addons:shelly-manager
-            ghcr.io/${{ github.repository_owner }}/home-assistant-addons:shelly-manager-${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/home-assistant-addons:latest
+            ghcr.io/${{ github.repository_owner }}/home-assistant-addons:${{ github.sha }}
           build-args: |
             BUILD_VERSION=${{ github.sha }}
