@@ -12,7 +12,7 @@ init: false
 ingress: true
 ingress_port: 8080
 ingress_entry: "shelly-manager"
-panel_icon: mdi:lightbulb-on
+panel_icon: mdi:toggle-switch-variant
 panel_title: Shelly Manager
 ports:
   "8000/tcp": 8000
