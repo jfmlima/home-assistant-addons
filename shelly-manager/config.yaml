@@ -1,4 +1,3 @@
-# https://developers.home-assistant.io/docs/add-ons/configuration#add-on-config
 name: Shelly Manager
 version: "1.0.0"
 slug: shelly-manager
@@ -12,14 +11,13 @@ boot: auto
 init: false
 ingress: true
 ingress_port: 8080
+ingress_entry: "shelly-manager"
 panel_icon: mdi:lightbulb-on
 panel_title: Shelly Manager
 ports:
   "8000/tcp": 8000
-  "8080/tcp": 8080
 ports_description:
   "8000/tcp": "API Server Port"
-  "8080/tcp": "Web Interface Port"
 map:
   - share:rw
   - ssl

@@ -8,14 +8,12 @@ FROM ghcr.io/hassio-addons/base:stable
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-RUN \
-    apk add --no-cache \
+RUN apk add --no-cache \
         python3 \
         py3-pip \
         curl \
-        nginx
-
-RUN adduser -D -u 10001 app
+        nginx \
+    && adduser -D -u 10001 app
 
 COPY --from=api-source --chown=app:app /app/packages/core /app/packages/core
 COPY --from=api-source --chown=app:app /app/packages/api /app/packages/api
@@ -23,16 +21,15 @@ COPY --from=api-source --chown=app:app /app/packages/api /app/packages/api
 COPY --from=web-source /usr/share/nginx/html /var/www/html/
 
 WORKDIR /app
-
 RUN python3 -m venv .venv \
     && . .venv/bin/activate \
-    && pip install --no-cache-dir /app/packages/core /app/packages/api
+    && pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir /app/packages/core /app/packages/api \
+    && rm -rf /root/.cache/pip
 
-
-ENV PATH="/app/.venv/bin:$PATH"
-ENV PYTHONDONTWRITEBYTECODE=1 
-ENV PYTHONUNBUFFERED=1
-
+ENV PATH="/app/.venv/bin:$PATH" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
 COPY rootfs /
 

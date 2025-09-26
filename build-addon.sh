@@ -1,20 +1,14 @@
 #!/bin/bash
-# Build script for Shelly Manager Home Assistant Addon
-
 set -e
 
-# Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Configuration
 ADDON_NAME="shelly-manager"
 DOCKER_REPO="ghcr.io/jfmlima"
-VERSION="1.0.0"
-
-# Supported platforms (handled by multi-arch build)
+VERSION=$(grep "^version:" shelly-manager/config.yaml | sed 's/version: *"\([^"]*\)".*/\1/')
 PLATFORMS="linux/amd64,linux/arm64"
 
 echo -e "${GREEN}Building Shelly Manager Home Assistant Addon${NC}"
