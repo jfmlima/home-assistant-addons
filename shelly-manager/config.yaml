@@ -10,8 +10,6 @@ arch:
 startup: application
 boot: auto
 init: false
-host_network: true
-webui: "http://[HOST]:[PORT:8080]"
 ingress: true
 ingress_port: 8080
 panel_icon: mdi:lightbulb-on
