@@ -5,10 +5,6 @@
 
 bashio::log.info "Starting nginx..."
 
-# Ensure nginx directories exist and have correct permissions
-mkdir -p /var/log/nginx /var/cache/nginx /var/lib/nginx
-chown -R nginx:nginx /var/log/nginx /var/cache/nginx /var/lib/nginx
-
 # Test nginx configuration
 bashio::log.info "Testing nginx configuration..."
 nginx -t
