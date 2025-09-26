@@ -6,6 +6,8 @@ FROM ghcr.io/jfmlima/shelly-manager-web:latest AS web-source
 
 FROM ghcr.io/hassio-addons/base:stable
 
+ENV LOG_FD=1
+
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN apk add --no-cache \
