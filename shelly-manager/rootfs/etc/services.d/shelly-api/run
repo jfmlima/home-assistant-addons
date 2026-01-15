@@ -4,28 +4,16 @@
 # ==============================================================================
 
 # Get addon configuration from Home Assistant
-DEVICE_IPS=$(bashio::config 'device_ips | @json')
-PREDEFINED_RANGES=$(bashio::config 'predefined_ranges | @json')
+SECRET_KEY=$(bashio::config 'secret_key')
 TIMEOUT=$(bashio::config 'timeout')
 MAX_WORKERS=$(bashio::config 'max_workers')
 LOG_LEVEL=$(bashio::config 'log_level')
 
-# Create config.json
-cat > /app/config.json << EOF
-{
-  "device_ips": ${DEVICE_IPS},
-  "predefined_ranges": ${PREDEFINED_RANGES},
-  "timeout": ${TIMEOUT},
-  "max_workers": ${MAX_WORKERS}
-}
-EOF
-
-bashio::log.info "Configuration created:"
-cat /app/config.json
-
 bashio::log.info "Starting Shelly Manager API..."
 
-export SHELLY_CONFIG_FILE=/app/config.json
+export SHELLY_SECRET_KEY="${SECRET_KEY}"
+export SHELLY_NETWORK__TIMEOUT="${TIMEOUT}"
+export SHELLY_NETWORK__MAX_WORKERS="${MAX_WORKERS}"
 export PATH="/app/.venv/bin:$PATH"
 export PYTHONDONTWRITEBYTECODE=1
 export PYTHONUNBUFFERED=1

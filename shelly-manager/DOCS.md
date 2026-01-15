@@ -8,18 +8,19 @@ Shelly Manager allows you to manage your Shelly devices directly from Home Assis
 
 ## Features
 
-- 🔍 **Device Discovery**: Scan and discover Shelly devices on your network using mDNS and network scanning
-- ⚡ **Firmware Management**: Update firmware from stable/beta channels
-- 🔧 **Device Configuration**: Manage device settings and configurations
-- 📊 **Bulk Operations**: Perform actions on multiple devices simultaneously
-- 🎛️ **Component Actions**: Control switches, covers, lights, and other components
-- 📈 **Status Monitoring**: Real-time device status and health monitoring
+- **Device Discovery**: Scan and discover Shelly devices on your network using mDNS and network scanning
+- **Firmware Management**: Update firmware from stable/beta channels
+- **Device Configuration**: Manage device settings and configurations
+- **Bulk Operations**: Perform actions on multiple devices simultaneously
+- **Component Actions**: Control switches, covers, lights, and other components
+- **Status Monitoring**: Real-time device status and health monitoring
+- **Credential Management**: Securely store and manage device passwords with encryption
 
 ## Installation
 
 1. Add this repository to your Home Assistant Supervisor add-on store
 2. Install the "Shelly Manager" add-on
-3. Configure your network settings in the add-on configuration
+3. Generate a secret key and configure the add-on (see Configuration below)
 4. Start the add-on
 5. Access the web interface through the "Web UI" button or via the sidebar panel
 
@@ -28,45 +29,54 @@ Shelly Manager allows you to manage your Shelly devices directly from Home Assis
 ### Basic Configuration
 
 ```yaml
-device_ips:
-  - "192.168.1.100"
-  - "192.168.1.101"
-predefined_ranges:
-  - start: "192.168.1.1"
-    end: "192.168.1.254"
+secret_key: "your-generated-fernet-key"
 timeout: 3.0
 max_workers: 50
 log_level: "info"
 ```
 
+### Generating a Secret Key
+
+The `secret_key` is required for encrypting stored device credentials. Generate one using Python:
+
+```bash
+python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+```
+
+Copy the output (a base64-encoded string) and paste it into the `secret_key` configuration field.
+
+**Important**: Keep your secret key safe. If you lose it, you will need to re-enter all device credentials.
+
 ### Configuration Options
 
-| Option              | Type   | Default     | Description                              |
-| ------------------- | ------ | ----------- | ---------------------------------------- |
-| `device_ips`        | list   | `[]`        | List of known Shelly device IP addresses |
-| `predefined_ranges` | list   | See example | Network ranges to scan for devices       |
-| `timeout`           | float  | `3.0`       | Connection timeout in seconds            |
-| `max_workers`       | int    | `50`        | Maximum concurrent workers for scanning  |
-| `log_level`         | string | `info`      | Log level (debug, info, warning, error)  |
+| Option        | Type   | Default | Description                              |
+| ------------- | ------ | ------- | ---------------------------------------- |
+| `secret_key`  | string | `""`    | Fernet encryption key for credentials (required) |
+| `timeout`     | float  | `3.0`   | Connection timeout in seconds            |
+| `max_workers` | int    | `50`    | Maximum concurrent workers for scanning  |
+| `log_level`   | string | `info`  | Log level (debug, info, warning, error)  |
 
-### Network Ranges
+## Managing Device Credentials
 
-Define network ranges where your Shelly devices are located:
+If your Shelly devices are password-protected, you can manage credentials through the web interface:
 
-```yaml
-predefined_ranges:
-  - start: "192.168.1.1"
-    end: "192.168.1.254"
-  - start: "10.0.0.1"
-    end: "10.0.0.100"
-```
+1. Open the Shelly Manager web UI
+2. Navigate to the **Credentials** section
+3. Add credentials for specific devices (by MAC address) or set a global fallback credential
+4. Credentials are stored encrypted and used automatically when communicating with devices
+
+### Credential Priority
+
+1. Device-specific credential (matched by MAC address)
+2. Global fallback credential (MAC: `*`)
+3. No authentication (for devices without password protection)
 
 ## Usage
 
 ### Web Interface
 
 1. Click "Open Web UI" or access via the Home Assistant sidebar
-2. Use the **Scan** button to discover devices on your network
+2. Use the **Scan** button to discover devices on your network (enter IP ranges or CIDR notation)
 3. View device status, firmware versions, and configurations
 4. Perform individual device actions or bulk operations
 5. Update firmware, reboot devices, or modify configurations
@@ -78,10 +88,12 @@ The addon also provides a REST API accessible at port 8000 with OpenAPI document
 Key endpoints:
 
 - `GET /api/health` - Service health check
-- `GET /api/devices/scan` - Discover devices
+- `POST /api/devices/scan` - Discover devices
 - `GET /api/devices/{ip}/status` - Get device status
 - `POST /api/devices/{ip}/update` - Update firmware
 - `POST /api/devices/bulk/update` - Bulk firmware updates
+- `GET /api/credentials` - List stored credentials
+- `POST /api/credentials` - Add/update credentials
 
 Access the API documentation by clicking "Open Web UI" and navigating to `/docs`.
 
@@ -97,15 +109,21 @@ Access the API documentation by clicking "Open Web UI" and navigating to `/docs`
 
 If devices are not being discovered:
 
-1. **Check Network Configuration**: Ensure the predefined ranges match your network setup
-2. **Verify Host Network**: The addon needs host network access for mDNS discovery
-3. **Firewall Settings**: Make sure multicast traffic is allowed on your network
-4. **Device Accessibility**: Test if devices are reachable from Home Assistant host
+1. **Verify Host Network**: The addon needs host network access for mDNS discovery
+2. **Firewall Settings**: Make sure multicast traffic is allowed on your network
+3. **Device Accessibility**: Test if devices are reachable from Home Assistant host
+
+### Authentication Issues
+
+If devices are returning authentication errors:
+
+1. **Check Credentials**: Ensure credentials are stored for the device in the Credentials section
+2. **Verify Password**: Make sure the password matches what's configured on the device
+3. **Check Logs**: Enable debug logging to see authentication attempts
 
 ### Common Solutions
 
 - **Check logs** for connection errors or timeouts
-- **Verify network ranges** in configuration match your actual network
 - **Increase timeout** if you have slow network or many devices
 
 ### Logs
@@ -118,9 +136,9 @@ log_level: "debug"
 
 ## Support
 
-- 📖 **Documentation**: [GitHub Repository](https://github.com/jfmlima/shelly-manager)
-- 🐛 **Issues**: [Report Issues](https://github.com/jfmlima/shelly-manager/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/jfmlima/shelly-manager/discussions)
+- **Documentation**: [GitHub Repository](https://github.com/jfmlima/shelly-manager)
+- **Issues**: [Report Issues](https://github.com/jfmlima/shelly-manager/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/jfmlima/shelly-manager/discussions)
 
 ## License
 

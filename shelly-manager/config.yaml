@@ -22,19 +22,12 @@ map:
   - share:rw
   - ssl
 options:
-  device_ips: []
-  predefined_ranges:
-    - start: "192.168.1.1"
-      end: "192.168.1.254"
+  secret_key: ""
   timeout: 3.0
   max_workers: 50
   log_level: "info"
 schema:
-  device_ips:
-    - str
-  predefined_ranges:
-    - start: str
-      end: str
+  secret_key: str
   timeout: float?
   max_workers: int?
   log_level: list(debug|info|warning|error)?
