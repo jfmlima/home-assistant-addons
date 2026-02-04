@@ -1,0 +1,78 @@
+name: Create Release on Version Change
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "shelly-manager/config.yaml"
+
+jobs:
+  check-version:
+    name: Check for version change
+    runs-on: ubuntu-latest
+    outputs:
+      version_changed: ${{ steps.check.outputs.changed }}
+      new_version: ${{ steps.check.outputs.version }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check if version changed
+        id: check
+        run: |
+          # Get current version
+          CURRENT_VERSION=$(grep "^version:" shelly-manager/config.yaml | sed 's/version: *"\([^"]*\)".*/\1/')
+          echo "Current version: $CURRENT_VERSION"
+
+          # Get previous version
+          git show HEAD^:shelly-manager/config.yaml > /tmp/old_config.yaml 2>/dev/null || echo "version: \"0.0.0\"" > /tmp/old_config.yaml
+          PREVIOUS_VERSION=$(grep "^version:" /tmp/old_config.yaml | sed 's/version: *"\([^"]*\)".*/\1/')
+          echo "Previous version: $PREVIOUS_VERSION"
+
+          if [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]; then
+            echo "Version changed from $PREVIOUS_VERSION to $CURRENT_VERSION"
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "Version unchanged"
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+  create-release:
+    name: Create GitHub Release
+    needs: check-version
+    if: needs.check-version.outputs.version_changed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ needs.check-version.outputs.new_version }}
+          name: Shelly Manager v${{ needs.check-version.outputs.new_version }}
+          generate_release_notes: true
+          body: |
+            ## Shelly Manager v${{ needs.check-version.outputs.new_version }}
+
+            ### Installation
+            Add this repository to your Home Assistant add-on store:
+            ```
+            https://github.com/jfmlima/home-assistant-addons
+            ```
+
+            ### Docker Image
+            ```
+            ghcr.io/jfmlima/addon-shelly-manager:${{ needs.check-version.outputs.new_version }}
+            ```
+
+            ---
+            See the auto-generated changelog below for details on what changed.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

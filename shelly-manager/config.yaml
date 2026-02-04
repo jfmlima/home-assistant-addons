@@ -1,5 +1,5 @@
 name: Shelly Manager
-version: "2024.09.26"
+version: "1.0.0"
 slug: shelly-manager
 description: Local management for Shelly IoT devices without cloud connectivity
 url: "https://github.com/jfmlima/shelly-manager"
