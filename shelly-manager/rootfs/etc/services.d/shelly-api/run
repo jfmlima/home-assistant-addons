@@ -12,6 +12,7 @@ LOG_LEVEL=$(bashio::config 'log_level')
 bashio::log.info "Starting Shelly Manager API..."
 
 export SHELLY_SECRET_KEY="${SECRET_KEY}"
+export SHELLY_DATA_DIR="/data"
 export SHELLY_NETWORK__TIMEOUT="${TIMEOUT}"
 export SHELLY_NETWORK__MAX_WORKERS="${MAX_WORKERS}"
 export PATH="/app/.venv/bin:$PATH"
