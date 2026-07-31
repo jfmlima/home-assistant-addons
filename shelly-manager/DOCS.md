@@ -71,6 +71,14 @@ If your Shelly devices are password-protected, you can manage credentials throug
 2. Global fallback credential (MAC: `*`)
 3. No authentication (for devices without password protection)
 
+## Stored Data
+
+The add-on keeps everything it stores in its own data volume, which survives restarts, updates and reboots: encrypted device credentials, configuration backups, backup schedules and provisioning profiles in a small SQLite database, plus a cache of downloaded firmware bundles.
+
+Cached bundles are the only part that grows. Each is a few megabytes, one per device model updated through the local firmware path, and they are kept until you delete them from the **Firmware** section of the web UI. They are included in Home Assistant's full backups, so clear out models you no longer own if your backups get larger than you expect.
+
+Changing `secret_key` after credentials or backups have been stored makes them permanently unreadable, since it is the key they were encrypted with.
+
 ## Usage
 
 ### Web Interface
