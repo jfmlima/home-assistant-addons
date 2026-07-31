@@ -1,5 +1,5 @@
 name: Shelly Manager
-version: "1.1.11"
+version: "1.1.12"
 slug: shelly-manager
 description: Local management for Shelly IoT devices without cloud connectivity
 url: "https://github.com/jfmlima/shelly-manager"
@@ -26,9 +26,11 @@ options:
   timeout: 3.0
   max_workers: 50
   log_level: "info"
+  advertised_base_url: ""
 schema:
   secret_key: str
   timeout: float?
   max_workers: int?
   log_level: list(debug|info|warning|error)?
+  advertised_base_url: str?
 image: "ghcr.io/jfmlima/addon-shelly-manager"
