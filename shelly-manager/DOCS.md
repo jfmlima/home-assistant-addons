@@ -33,14 +33,15 @@ secret_key: "your-generated-fernet-key"
 timeout: 3.0
 max_workers: 50
 log_level: "info"
+advertised_base_url: ""
 ```
 
 ### Generating a Secret Key
 
-The `secret_key` is required for encrypting stored device credentials. Generate one using Python:
+The `secret_key` is required for encrypting stored device credentials. Generate one with:
 
 ```bash
-python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+openssl rand -base64 32 | tr '+/' '-_'
 ```
 
 Copy the output (a base64-encoded string) and paste it into the `secret_key` configuration field.
@@ -55,6 +56,13 @@ Copy the output (a base64-encoded string) and paste it into the `secret_key` con
 | `timeout`     | float  | `3.0`   | Connection timeout in seconds            |
 | `max_workers` | int    | `50`    | Maximum concurrent workers for scanning  |
 | `log_level`   | string | `info`  | Log level (debug, info, warning, error)  |
+| `advertised_base_url` | string | `""` | Address your devices can reach this add-on on, for updating a device with no internet access |
+
+### Updating a Device Without Internet Access
+
+A Shelly that cannot reach the internet can still be updated: the add-on downloads the firmware once and tells the device to fetch it from the add-on instead.
+
+Set `advertised_base_url` to the address your devices can reach Home Assistant on, port 8000, for example `http://192.168.1.50:8000`. It cannot be worked out from inside the add-on, and local updates fail immediately without it. Devices fetch that address unauthenticated, so it has to be reachable from whatever network they are on.
 
 ## Managing Device Credentials
 
